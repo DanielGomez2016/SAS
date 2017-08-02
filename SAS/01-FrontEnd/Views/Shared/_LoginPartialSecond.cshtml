@@ -1,0 +1,20 @@
+﻿@using Microsoft.AspNet.Identity
+@{
+    HttpCookie cookie = Request.Cookies.Get("Usuario");
+    ViewBag.nombre = cookie == null ? "" : cookie["Nombre"];
+    ViewBag.Tfoto = cookie == null ? "" : cookie["Perfil"];
+}
+
+@if (Request.IsAuthenticated)
+{
+
+    <div class="profile clearfix">
+        <div class="profile_pic">
+            <img src="@(ViewBag.Tfoto == "" ? Url.Action("GetImagen", "Account") : ViewBag.Tfoto)" alt="..." class="img-circle profile_img">
+        </div>
+        <div class="profile_info">
+            <span>Bienvenido,</span>
+            <h2>@ViewBag.nombre</h2>
+        </div>
+    </div>
+}

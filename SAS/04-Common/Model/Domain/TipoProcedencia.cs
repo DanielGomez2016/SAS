@@ -13,6 +13,7 @@ namespace Model.Domain
         public int TipoProcedenciaId { get; set; }
         public string Tipo { get; set; }
 
+        public List<Procedencia> Procedencia { get; set; }
 
         public bool Deleted { get; set; }
     }

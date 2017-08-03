@@ -9,7 +9,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Auth.Service
@@ -72,7 +71,7 @@ namespace Auth.Service
             return manager;
         }
 
-        public async override Task<IdentityResult> AddToRoleAsync(string userId, string roleId)
+        public override Task<IdentityResult> AddToRoleAsync(string userId, string roleId)
         {
             try
             {
@@ -87,16 +86,16 @@ namespace Auth.Service
                     ctx.SaveChanges();
                 }
 
-                return await Task.FromResult(IdentityResult.Success);
+                return Task.FromResult(IdentityResult.Success);
             }
             catch (Exception ex)
             {
                 logger.Error(ex.Message);
-                return await Task.FromResult(new IdentityResult(ex.Message));
+                return Task.FromResult(new IdentityResult(ex.Message));
             }
         }
 
-        public async override Task<IdentityResult> AddToRolesAsync(string userId, params string[] roles)
+        public override Task<IdentityResult> AddToRolesAsync(string userId, params string[] roles)
         {
             try
             {
@@ -114,16 +113,16 @@ namespace Auth.Service
                     ctx.SaveChanges();
                 }
 
-                return await Task.FromResult(IdentityResult.Success);
+                return Task.FromResult(IdentityResult.Success);
             }
             catch (Exception ex)
             {
                 logger.Error(ex.Message);
-                return await Task.FromResult(new IdentityResult(ex.Message));
+                return Task.FromResult(new IdentityResult(ex.Message));
             }
         }
 
-        public async new Task<IEnumerable<ApplicationRole>> GetRolesAsync(string userId)
+        public new Task<IEnumerable<ApplicationRole>> GetRolesAsync(string userId)
         {
             IEnumerable<ApplicationRole> result = new List<ApplicationRole>();
 
@@ -140,10 +139,10 @@ namespace Auth.Service
                 logger.Error(ex.Message);
             }
 
-            return await Task.FromResult(result);
+            return Task.FromResult(result);
         }
 
-        public async override Task<bool> IsInRoleAsync(string userId, string roleId)
+        public override Task<bool> IsInRoleAsync(string userId, string roleId)
         {
             var result = false;
 
@@ -159,10 +158,10 @@ namespace Auth.Service
                 logger.Error(ex.Message);
             }
 
-            return await Task.FromResult(result);
+            return Task.FromResult(result);
         }
 
-        public async override Task<IdentityResult> RemoveFromRoleAsync(string userId, string roleId)
+        public override Task<IdentityResult> RemoveFromRoleAsync(string userId, string roleId)
         {
             try
             {
@@ -174,16 +173,16 @@ namespace Auth.Service
                     ctx.SaveChanges();
                 }
 
-                return await Task.FromResult(IdentityResult.Success);
+                return Task.FromResult(IdentityResult.Success);
             }
             catch (Exception ex)
             {
                 logger.Error(ex.Message);
-                return await Task.FromResult(new IdentityResult(ex.Message));
+                return Task.FromResult(new IdentityResult(ex.Message));
             }
         }
 
-        public async override Task<IdentityResult> RemoveFromRolesAsync(string userId, params string[] roles)
+        public override Task<IdentityResult> RemoveFromRolesAsync(string userId, params string[] roles)
         {
             try
             {
@@ -195,12 +194,12 @@ namespace Auth.Service
                     ctx.SaveChanges();
                 }
 
-                return await Task.FromResult(IdentityResult.Success);
+                return Task.FromResult(IdentityResult.Success);
             }
             catch (Exception ex)
             {
                 logger.Error(ex.Message);
-                return await Task.FromResult(new IdentityResult(ex.Message));
+                return Task.FromResult(new IdentityResult(ex.Message));
             }
         }
     }

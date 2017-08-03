@@ -1,11 +1,5 @@
-﻿
-using System.Data.Entity;
-using System.Web.Mvc;
-using System.Web.Optimization;
+﻿using System.Web.Mvc;
 using System.Web.Routing;
-using FluentScheduler;
-using IdentitySample;
-using Model.Domain;
 
 namespace FrontEnd
 {
@@ -16,8 +10,6 @@ namespace FrontEnd
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            //BundleConfig.RegisterBundles(BundleTable.Bundles);
-            JobManager.Initialize(new Notificaciones());
         }
     }
 }

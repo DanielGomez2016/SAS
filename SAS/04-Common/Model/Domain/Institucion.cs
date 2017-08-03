@@ -23,9 +23,8 @@ namespace Model.Domain
 
 
         public List<AccesoSistemaRol> AccesosRol { get; set; }
-        public List<Departamento> Departamentos { get; set; }
 
-        public List<ApplicationUser> ApplicationUser { get; set; }
+        public List<Departamento> Departamentos { get; set; }
 
     }
 }

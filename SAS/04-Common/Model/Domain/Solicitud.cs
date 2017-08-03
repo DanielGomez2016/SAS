@@ -1,4 +1,5 @@
-﻿using Common.CustomFilters;
+﻿using Common;
+using Common.CustomFilters;
 using Model.Helper;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,8 @@ namespace Model.Domain
         public DateTime FechaValidacion { get; set; }
         public string Programa { get; set; }
 
+        public Enums.Status Estatus { get; set; }
+
         public int EscuelaId { get; set; }
         public Escuela Escuela { get; set; }
 
@@ -29,6 +32,14 @@ namespace Model.Domain
 
         public int InstitucionId { get; set; }
         public Institucion Institucion { get; set; }
+
+        public List<Canalizacion> Canalizacion { get; set; }
+
+        public int ProcedenciaId { get; set; }
+        public Procedencia Procedencia { get; set; }
+
+        public int TipoAsuntoId { get; set; }
+        public TipoAsunto TipoAsunto { get; set; }
 
         public bool Deleted { get; set; }
     }

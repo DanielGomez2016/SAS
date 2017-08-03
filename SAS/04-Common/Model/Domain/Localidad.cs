@@ -25,5 +25,7 @@ namespace Model.Domain
         public List<Escuela> Escuelas { get; set; }
         public List<Beneficiario> Beneficiarios { get; set; }
 
+        public List<Procedencia> Procedencia { get; set; }
+
     }
 }

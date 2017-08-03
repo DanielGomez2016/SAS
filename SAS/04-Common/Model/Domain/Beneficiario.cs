@@ -20,6 +20,8 @@ namespace Model.Domain
 
         public List<Solicitud> Solicitudes { get; set; }
 
+        public List<Contacto> Contactos { get; set; }
+
         public bool Deleted { get; set; }
 
     }

@@ -13,7 +13,7 @@ namespace Model.Domain
         public int TipoAsuntoId { get; set; }
         public string Asunto { get; set; }
 
-
+        public List<Solicitud> Solicitudes { get; set; }
         public bool Deleted { get; set; }
     }
 }

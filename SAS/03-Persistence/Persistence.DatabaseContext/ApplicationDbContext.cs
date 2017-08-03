@@ -15,318 +15,38 @@ namespace Persistence.DatabaseContext
 {
     public class ApplicationDbContext : IdentityDbContext
     {
-        public virtual DbSet<ApplicationUser> ApplicationUser { get; set; }
-        public virtual DbSet<ApplicationRole> ApplicationRole { get; set; }
-        public virtual DbSet<ApplicationUserRole> ApplicationUserRole { get; set; }
-
-        public virtual DbSet<Student> Student { get;set; }
-        public virtual DbSet<StudentPerCourse> StudentPerCourse { get; set; }
-        public virtual DbSet<Course> Course { get; set; }
-
-        public virtual DbSet<AccesoSistema> AccesoSistema { get; set; }
-        public virtual DbSet<Institucion> Institucion { get; set; }
-        public virtual DbSet<AccesoSistemaRol> AccesoSistemaRol { get; set; }
-        public virtual DbSet<Departamento> Departamento { get; set; }
-        public virtual DbSet<Municipio> Municipio { get; set; }
-        public virtual DbSet<Localidad> Localidad { get; set; }
-        public virtual DbSet<NivelEducativo> NivelEducativo {get;set;}
-        public virtual DbSet<Escuela> Escuela { get; set; }
-        public virtual DbSet<Beneficiario> Beneficiario { get; set; }
-        public virtual DbSet<Contacto> Contacto { get; set; }
-        public virtual DbSet<Solicitud> Solicitud { get; set; }
-        public virtual DbSet<Canalizacion> Canalizacion { get; set; }
-        public virtual DbSet<DetCanalizacion> DetCanalizacion { get; set; }
-        public virtual DbSet<Procedencia> Procedencia { get; set; }
-        public virtual DbSet<TipoProcedencia> TipoProcedencia { get; set; }
-        public virtual DbSet<TipoAsunto> TipoAsunto { get; set; }
-        public virtual DbSet<Estatus> Estatus { get; set; }
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
+        public DbSet<ApplicationRole> ApplicationRole { get; set; }
+        public DbSet<ApplicationUserRole> ApplicationUserRole { get; set; }
+        public DbSet<AccesoSistema> AccesoSistema { get; set; }
+        public DbSet<AccesoSistemaRol> AccesoSistemaRol { get; set; }
+        public DbSet<Beneficiario> Beneficiario { get; set; }
+        public DbSet<Canalizacion> Canalizacion { get; set; }
+        public DbSet<Contacto> Contacto { get; set; }
+        public DbSet<Departamento> Departamento { get; set; }
+        public DbSet<DetCanalizacion> DetCanalizacion { get; set; }
+        public DbSet<Documentos> Documentos { get; set; }
+        public DbSet<Escuela> Escuela { get; set; }
+        public DbSet<Institucion> Institucion { get; set; }
+        public DbSet<Localidad> Localidad { get; set; }
+        public DbSet<Municipio> Municipio { get; set; }
+        public DbSet<NivelEducativo> NivelEducativo { get; set; }
+        public DbSet<Procedencia> Procedencia { get; set; }
+        public DbSet<Solicitud> Solicitud { get; set; }
+        public DbSet<TipoAsunto> TipoAsunto { get; set; }
+        public DbSet<TipoProcedencia> TipoProcedencia { get; set; }
 
 
         public ApplicationDbContext()
             : base(string.Format("name={0}", Parameters.AppContext))
         {
-
         }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             AddMyFilters(ref modelBuilder);
-            modelBuilder.Configurations.AddFromAssembly(Assembly.GetAssembly(typeof(ApplicationDbContext)));
-
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
-
-            #region AccesoSistema
-
-            modelBuilder.Entity<AccesoSistema>()
-                        .Property(x => x.Controlador)
-                        .HasMaxLength(50)
-                        .IsRequired();
-
-            modelBuilder.Entity<AccesoSistema>()
-                        .Property(x => x.Accion)
-                        .HasMaxLength(50)
-                        .IsRequired();
-
-            modelBuilder.Entity<AccesoSistema>()
-                        .Property(x => x.Descripcion)
-                        .HasMaxLength(500)
-                        .IsRequired();
-
-            modelBuilder.Entity<AccesoSistema>()
-                        .Property(x => x.Activo)
-                        .IsRequired();
-
-            #endregion
-
-            #region AccesoSistemaRol
-
-            modelBuilder.Entity<AccesoSistemaRol>()
-                        .HasKey(x => new { x.AccesoSistemaId, x.Id, x.InstitucionId});
-
-            #endregion
-
-            #region Institucion
-
-            modelBuilder.Entity<Institucion>()
-                        .Property(x => x.Nombre)
-                        .HasMaxLength(150)
-                        .IsRequired();
-
-            modelBuilder.Entity<Institucion>()
-                        .Property(x => x.Siglas)
-                        .HasMaxLength(20)
-                        .IsRequired();
-
-            modelBuilder.Entity<Institucion>()
-                        .Property(x => x.Titular)
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-            modelBuilder.Entity<Institucion>()
-                        .Property(x => x.Descripcion)
-                        .HasColumnType("text")
-                        .IsRequired();
-
-            modelBuilder.Entity<Institucion>()
-                        .Property(x => x.Telefono)
-                        .HasMaxLength(10)
-                        .IsRequired();
-
-            modelBuilder.Entity<Institucion>()
-                        .Property(x => x.Extencion)
-                        .HasMaxLength(10)
-                        .IsRequired();
-
-            #endregion
-
-            #region Departamento
-
-            modelBuilder.Entity<Departamento>()
-                        .Property(x => x.Nombre)
-                        .HasMaxLength(50)
-                        .IsRequired();
-
-            modelBuilder.Entity<Departamento>()
-                        .Property(x => x.Titular)
-                        .HasMaxLength(50)
-                        .IsRequired();
-
-            modelBuilder.Entity<Departamento>()
-                        .Property(x => x.Descripcion)
-                        .HasColumnType("text")
-                        .IsRequired();
-
-            modelBuilder.Entity<Departamento>()
-                        .Property(x => x.Extencion)
-                        .IsRequired();
-
-            #endregion
-
-            #region Municipio
-
-            modelBuilder.Entity<Municipio>()
-                        .Property(x => x.Nombre)
-                        .HasMaxLength(50)
-                        .IsRequired();
-
-            #endregion
-
-            #region Localidad
-
-            modelBuilder.Entity<Localidad>()
-                        .Property(x => x.Nombre)
-                        .HasMaxLength(50)
-                        .IsRequired();
-
-            modelBuilder.Entity<Localidad>()
-                        .Property(x => x.ClaveLocalidad)
-                        .HasMaxLength(20)
-                        .IsRequired();
-
-            modelBuilder.Entity<Localidad>()
-                        .Property(x => x.Latitud)
-                        .HasMaxLength(50);
-
-            modelBuilder.Entity<Localidad>()
-                        .Property(x => x.Longitud)
-                        .HasMaxLength(50);
-
-            modelBuilder.Entity<Localidad>()
-                        .Property(x => x.Altitud);
-
-            #endregion
-
-            #region Nivel Educativo
-
-            modelBuilder.Entity<NivelEducativo>()
-                        .Property(x => x.Nivel)
-                        .HasMaxLength(100)
-                        .IsRequired();
-
-            modelBuilder.Entity<NivelEducativo>()
-                        .Property(x => x.Descripcion)
-                        .HasColumnType("text")
-                        .IsRequired();
-
-            #endregion
-
-            #region Escuela
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Nombre)
-                        .HasMaxLength(50)
-                        .IsRequired();
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Clave)
-                        .HasMaxLength(150)
-                        .IsRequired();
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Domicilio)
-                        .HasMaxLength(150);
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Turno)
-                        .HasMaxLength(150);
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Geox)
-                        .HasMaxLength(500);
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Geoy)
-                        .HasMaxLength(500);
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Colonia)
-                        .HasMaxLength(100);
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Marginacion)
-                        .HasMaxLength(50);
-
-            modelBuilder.Entity<Escuela>()
-                        .Property(x => x.Poblacion)
-                        .HasMaxLength(50);
-
-            #endregion
-
-            #region Beneficiario
-
-            modelBuilder.Entity<Beneficiario>()
-                         .Property(x => x.Nombre)
-                         .HasMaxLength(150)
-                         .IsRequired();
-
-            modelBuilder.Entity<Beneficiario>()
-                        .Property(x => x.Domicilio)
-                        .HasMaxLength(150)
-                        .IsRequired();
-
-            #endregion
-
-            #region Solicitud
-
-            modelBuilder.Entity<Solicitud>()
-                         .Property(x => x.Asunto)
-                         .HasColumnType("text")
-                         .IsRequired();
-
-            modelBuilder.Entity<Solicitud>()
-                        .Property(x => x.Folio)
-                        .HasMaxLength(25)
-                        .IsRequired();
-
-            modelBuilder.Entity<Solicitud>()
-                        .Property(x => x.FechaEntrega)
-                        .IsRequired();
-
-            modelBuilder.Entity<Solicitud>()
-                        .Property(x => x.MetaGeneral)
-                        .HasColumnType("text");
-
-            modelBuilder.Entity<Solicitud>()
-                        .Property(x => x.Programa)
-                        .HasMaxLength(50)
-                        .IsRequired();
-
-            #endregion
-
-            #region Canalizacion
-
-            #endregion
-
-            #region Canalizacion detalle
-
-            modelBuilder.Entity<DetCanalizacion>()
-                         .Property(x => x.Comentario)
-                         .HasColumnType("text")
-                         .IsRequired();
-
-            #endregion
-
-            #region Procedencia
-
-            modelBuilder.Entity<Procedencia>()
-                         .Property(x => x.Nombre)
-                         .HasMaxLength(250)
-                         .IsRequired();
-
-            modelBuilder.Entity<Procedencia>()
-                         .Property(x => x.Domicilio)
-                         .HasMaxLength(250)
-                         .IsRequired();
-
-            #endregion
-
-            #region Tipo Asunto
-
-            modelBuilder.Entity<TipoAsunto>()
-                         .Property(x => x.Asunto)
-                         .HasMaxLength(250)
-                         .IsRequired();
-
-            #endregion
-
-            #region Tipo Procendencia
-
-            modelBuilder.Entity<TipoProcedencia>()
-                         .Property(x => x.Tipo)
-                         .HasMaxLength(250)
-                         .IsRequired();
-
-            #endregion
-
-            #region Estatus
-
-            modelBuilder.Entity<Estatus>()
-                         .Property(x => x.Nombre)
-                         .HasMaxLength(50)
-                         .IsRequired();
-
-            #endregion
-
+            modelBuilder.Configurations.AddFromAssembly(Assembly.GetAssembly(typeof(ApplicationDbContext)));
 
             base.OnModelCreating(modelBuilder);
         }

@@ -19,6 +19,12 @@ namespace Model.Domain
         public int EscuelaId { get; set; }
         public Escuela Escuela { get; set; }
 
+        public int BeneficiarioId { get; set; }
+        public Beneficiario Beneficiario { get; set; }
+
+        public int ProcedenciaId { get; set; }
+        public Procedencia Procedencia { get; set; }
+
         public bool Deleted { get; set; }
 
     }

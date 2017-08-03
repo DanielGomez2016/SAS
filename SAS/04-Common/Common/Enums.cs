@@ -7,16 +7,50 @@ namespace Common
 {
     public class Enums
     {
+        public enum EntityType
+        {
+            Users,
+            Categories,
+            Courses
+        }
+
+        public enum IncomeType
+        {
+            Total,
+            CompanyTotal,
+            TeacherTotal
+        }
+
+        public enum PanelMenu
+        {
+            Home,
+            Categories,
+            Courses,
+            Users,
+        }
+
         public enum Gender
         {
+            [Description("Masculino")]
             Male,
+            [Description("Femenino")]
             Female
         }
 
         public enum Status
         {
-            Enable,
-            Disable
+            INICIADO,
+            CANALIZADO,
+            ATENDIDO,
+            CANCELADO,
+            CERRADO
+        }
+
+        public enum StatusEscolar
+        {
+            SERVICIO,
+            CERRADO,
+            REAPERTURA
         }
 
         public enum MyFilters

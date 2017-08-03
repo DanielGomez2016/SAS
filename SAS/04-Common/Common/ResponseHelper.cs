@@ -1,4 +1,6 @@
-﻿namespace Common
+﻿using System.Collections.Generic;
+
+namespace Common
 {
     public abstract class ResponseHelperBase
     {
@@ -6,6 +8,16 @@
         public string Message { get; set; }
         public string Function { get; set; }
         public string Href { get; set; }
+        public Dictionary<string, string> Validations { get; set; }
+
+        public void SetValidations(Dictionary<string, string> vals)
+        {
+            if (vals != null && vals.Count > 0)
+            {
+                Validations = vals;
+                PrepareResponse(false, "La validación no ha sido superada");
+            }
+        }
 
         protected void PrepareResponse(bool r, string m = "")
         {
@@ -17,14 +29,13 @@
             }
             else
             {
-                Message = (m == "" ? "An unexpected error occurred" : m);
+                Message = (m == "" ? "Ocurrió un error inesperado" : m);
             }
         }
 
         public ResponseHelperBase()
         {
-            Response = false;
-            Message = "An unexpected error occurred";
+            PrepareResponse(false);
         }
     }
 

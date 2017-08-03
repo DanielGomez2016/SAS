@@ -23,7 +23,9 @@ namespace Model.Domain
         public int InstitucionId { get; set; }
         public Institucion Institucion { get; set; }
 
-        public List<ApplicationUser> ApplicationUser { get; set; }
+        public List<DetCanalizacion> Canalizaciones { get; set; }
+
+        public List<ApplicationUser> Usuarios { get; set; }
 
     }
 }

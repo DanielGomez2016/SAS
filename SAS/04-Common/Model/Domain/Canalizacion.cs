@@ -15,6 +15,9 @@ namespace Model.Domain
 
         public List<DetCanalizacion> DetCanalizacion { get; set; }
 
+        public int SolicitudId { get; set; }
+        public Solicitud Solicitud { get; set; }
+
         public bool Deleted { get; set; }
     }
 }

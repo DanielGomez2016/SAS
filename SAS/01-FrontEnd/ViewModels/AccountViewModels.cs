@@ -58,7 +58,7 @@ namespace FrontEnd.ViewModels
         [Display(Name = "Password")]
         public string Password { get; set; }
 
-        [Display(Name = "Remember me?")]
+        [Display(Name = "Recordarme?")]
         public bool RememberMe { get; set; }
     }
 
@@ -68,6 +68,15 @@ namespace FrontEnd.ViewModels
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; }
+
+        [Required]
+        [Display(Name = "Nombre(s)")]
+        public string Nombre { get; set; }
+
+        [Required]
+        [EmailAddress]
+        [Display(Name = "Apellidos")]
+        public string Apellidos { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

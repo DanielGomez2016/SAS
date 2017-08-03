@@ -1,4 +1,5 @@
-﻿using Common.CustomFilters;
+﻿using Common;
+using Common.CustomFilters;
 using Model.Helper;
 using System;
 using System.Collections.Generic;
@@ -22,6 +23,8 @@ namespace Model.Domain
         public string Marginacion { get; set; }
         public string Poblacion { get; set; }
         public int Zona { get; set; }
+
+        public Enums.StatusEscolar Estatus { get; set; }
 
         public List<Contacto> Contactos { get; set; }
 

@@ -11,6 +11,9 @@ namespace FrontEnd
     {
         public static void RegisterRoutes(RouteCollection routes)
         {
+            // Custom routes
+            routes.MapMvcAttributeRoutes();
+
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
             routes.MapRoute(

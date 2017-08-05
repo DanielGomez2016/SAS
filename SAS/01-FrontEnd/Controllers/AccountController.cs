@@ -168,8 +168,8 @@ namespace FrontEnd.Controllers
                 var user = new ApplicationUser {
                     UserName = model.Email,
                     Email = model.Email,
-                    Nombre = model.Nombre,
-                    Apellidos = model.Apellidos
+                    Name = model.Name,
+                    LastName = model.LastName
                 };
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)

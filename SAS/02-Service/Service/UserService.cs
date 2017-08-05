@@ -1,4 +1,5 @@
-﻿using Model.Auth;
+﻿using Common;
+using Model.Auth;
 using Model.Custom;
 using NLog;
 using Persistence.DbContextScope;
@@ -14,6 +15,7 @@ namespace Service
     public interface IUserService
     {
         IEnumerable<UserForGridView> GetAll();
+        ResponseHelper Update(ApplicationUser model);
     }
 
     public class UserService : IUserService
@@ -57,7 +59,8 @@ namespace Service
 
                     result = (
                         from u in users
-                        select new UserForGridView {
+                        select new UserForGridView
+                        {
                             Id = u.Id,
                             Email = u.Email,
                             Roles = queryUsersPerRoles.Where(x =>
@@ -73,6 +76,34 @@ namespace Service
             }
 
             return result;
+        }
+
+        public ResponseHelper Update(ApplicationUser model)
+        {
+            var rh = new ResponseHelper();
+
+            try
+            {
+                using (var ctx = _dbContextScopeFactory.Create())
+                {
+                    var originalModel = _applicationUserRepo.Single(x => x.Id == model.Id);
+                    originalModel.Nombre = model.Nombre;
+                    originalModel.Apellidos = model.Apellidos;
+
+                    _applicationUserRepo.Update(originalModel);
+                    ctx.SaveChanges();
+
+                    rh.SetResponse(true);
+
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Error(e.Message);
+                rh.SetResponse(false, e.Message);
+            }
+
+            return rh;
         }
     }
 }

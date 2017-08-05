@@ -71,12 +71,12 @@ namespace FrontEnd.ViewModels
 
         [Required]
         [Display(Name = "Nombre(s)")]
-        public string Nombre { get; set; }
+        public string Name { get; set; }
 
         [Required]
         [EmailAddress]
         [Display(Name = "Apellidos")]
-        public string Apellidos { get; set; }
+        public string LastName { get; set; }
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]

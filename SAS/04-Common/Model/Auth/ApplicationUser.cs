@@ -16,8 +16,15 @@ namespace Model.Auth
             return userIdentity;
         }
 
-        public string Nombre { get; set; }
-        public string Apellidos { get; set; }
+        public string Name { get; set; }
+        public string LastName { get; set; }
+        public byte[] BigFile { get; set; }
+        public byte[] SmallFile { get; set; }
 
+        public Institution Institution { get; set; }
+        public int? InstitutionId { get; set; }
+
+        public Department Department { get; set; }
+        public int? DepartmentId { get; set; }
     }
 }

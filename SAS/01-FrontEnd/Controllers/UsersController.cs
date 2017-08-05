@@ -1,5 +1,8 @@
 ﻿using Auth.Service;
 using Common;
+using FrontEnd.App_Start;
+using FrontEnd.ViewModels;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Model.Auth;
 using Service;
@@ -62,5 +65,39 @@ namespace FrontEnd.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public async Task<ActionResult> GetProfile()
+        {
+            var userId = CurrentUserHelper.Get.UserId;
+            var model = await _userManager.FindByIdAsync(userId);
+
+            return View(new UserBasicInformationViewModel {
+                Id = model.Id,
+                Nombre = model.Nombre,
+                Apellidos = model.Apellidos
+            });
+        }
+
+        public JsonResult Update(UserBasicInformationViewModel model)
+        {
+            var rh = new ResponseHelper();
+
+            if (ModelState.IsValid)
+            {
+                rh = _userService.Update(new ApplicationUser
+                {
+                    Id = model.Id,
+                    Nombre = model.Nombre,
+                    Apellidos = model.Apellidos
+                });
+            }
+            else
+            {
+                rh.SetValidations(ModelState.GetErrors());
+            }
+
+            return Json(rh);
+        }
+
     }
 }

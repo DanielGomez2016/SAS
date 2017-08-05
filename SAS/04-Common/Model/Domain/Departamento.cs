@@ -25,7 +25,5 @@ namespace Model.Domain
 
         public List<DetCanalizacion> Canalizaciones { get; set; }
 
-        public List<ApplicationUser> Usuarios { get; set; }
-
     }
 }

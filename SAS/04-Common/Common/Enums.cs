@@ -37,20 +37,33 @@ namespace Common
             Female
         }
 
-        public enum Status
+        public enum Turn
         {
-            INICIADO,
-            CANALIZADO,
-            ATENDIDO,
-            CANCELADO,
-            CERRADO
+            Evening,
+            Morning
         }
 
-        public enum StatusEscolar
+
+        public enum Status
         {
-            SERVICIO,
-            CERRADO,
-            REAPERTURA
+            Open,
+            Channeled,
+            Canceled,
+            Closed,
+            Attended
+        }
+
+        public enum StatusCollege
+        {
+            Open,
+            Colse,
+            Reopened
+        }
+
+        public enum StatusAccess
+        {
+            On,
+            Off
         }
 
         public enum MyFilters

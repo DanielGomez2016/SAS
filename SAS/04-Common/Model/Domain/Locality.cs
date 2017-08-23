@@ -16,6 +16,14 @@ namespace Model.Domain
         [Display(Name = "Nombre")]
         public string Name { get; set; }
 
+        public string code { get; set; }
+
+        public string latitude { get; set; }
+
+        public string Length { get; set; }
+
+        public int Altitude { get; set; }
+
         public ICollection<College> Collages { get; set; }
 
         public ICollection<Beneficiary> Beneficiary { get; set; }

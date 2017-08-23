@@ -26,6 +26,8 @@ namespace Model.Domain
         public int InstitutionId { get; set; }
         public Institution Institution { get; set; }
 
+        public bool Access { get; set; }
+
         public bool Deleted { get; set; }
 
     }

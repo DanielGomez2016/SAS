@@ -1,0 +1,157 @@
+﻿
+<div class="size" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Asignacion de accesos a Rol</h2>
+                        <div class="clearfix"></div>
+                        <ul class="nav navbar-right panel_toolbox"></ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div id="listRoles"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="access-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @using (Html.BeginForm("AccessSave", "Access", FormMethod.Post))
+            {
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Acceso</h4>
+                </div>
+                <div class="modal-body">
+                    <access url="@Url.Action("GetAccess", "Access")"></access>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit"
+                            data-reset="true"
+                            data-ajax="true"
+                            class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+   
+    <script>
+        $(document).ready(function () {
+            debugger;
+            $("button").tooltip();
+
+            let config = {
+                class: 'table-striped table-bordered',
+                columnas: [
+                    { leyenda: 'Rol', columna: 'Name', ordenable: true, filtro: true, class: 'text-center col-md-2' },
+                    { leyenda: '# Usuarios', columna: 'TotalUsers', class: 'text-center col-md-1' },
+                    { leyenda: 'Accesos', class: 'text-center col-md-7' },
+                ],
+                modelo: [
+                    { propiedad: 'Name' },
+                    { propiedad: 'TotalUsers', class: 'text-center' },
+                    {
+                        propiedad: 'Id', formato: function (tr, obj, value) {
+                            let element = '';
+
+                            for (let i = 0; i < obj.bodyAccess.length; i++) {
+                                if (obj.bodyAccess[i].Status) {
+                                    element += '<button value="' + value +
+                                        '" data-access="' + obj.bodyAccess[i].AccessId +
+                                        '" data-status="' + obj.bodyAccess[i].Status +
+                                        '" data-institute="' + obj.InstituteId +
+                                        '" data-toggle="tooltip" data-placement="top" title="" data-original-title="' +
+                                        '" type="button" class="red-tooltip btn btn-success role-remove"><i class="fa fa-check-square-o"></i> ' + obj.bodyAccess[i].AccessName + '</button>';
+                                } else {
+                                    element += '<button value="' + value +
+                                        '" data-access="' + obj.bodyAccess[i].AccessId +
+                                        '" data-status="' + obj.bodyAccess[i].Status +
+                                        '" data-institute="' + obj.InstituteId +
+                                        '" data-toggle="tooltip" data-placement="top" title="" data-original-title="'+
+                                        '" type="button" class="red-tooltip btn btn-danger role-add"><i class="fa fa-square-o"></i> ' + obj.bodyAccess[i].AccessName +'</button>';
+                                }
+                            }
+                            return element;
+                        }
+                    },
+                ],
+                url: '@Url.Action("GetAllRole", "Access", new { acronym = ViewBag.Acronym })',
+                limite: [10, 15, 20],
+                filtrable: true,
+                paginable: true,
+                columna: 'Name',
+                columna_orden: 'ASC'
+            };
+
+            let grid = $("#listRoles").anexGrid(config);
+
+            grid.tabla().on('click', '.role-add', function () {
+                let role = $(this).val();
+                let access = $(this).data('access');
+                let institute = $(this).data('institute');
+                let status = $(this).data('status');
+
+                if (!confirm('Esta seguro que deseas agregar el acceso a este rol?')) return;
+
+                $.post('@Url.Action("ChangeStatusByAccessRole", "Access")', {
+                    id: role, access: access, institute: institute, status: status
+                }, function (r) {
+                    if (!r.Response) {
+                        alert(r.Message)
+                    } else {
+                        grid.refrescar();
+                        }
+                    }, 'json')
+            })
+
+            grid.tabla().on('click', '.role-remove', function () {
+                let role = $(this).val();
+                let access = $(this).data('access');
+                let institute = $(this).data('institute');
+                let status = $(this).data('status');
+
+                if (!confirm('Esta seguro que deseas eliminar el acceso a este rol?')) return;
+
+                $.post('@Url.Action("ChangeStatusByAccessRole", "Access")', {
+                    id: role, access: access, institute: institute, status: status
+                }, function (r) {
+                    if (!r.Response) {
+                        alert(r.Message)
+                    } else {
+                        grid.refrescar();
+                        }
+                    }, 'json')
+            })
+
+            //al cambiar tamaño de la pagina
+            $(window).on("resize", resize);
+
+            // y al cargar la página
+            resize();
+
+        })
+
+        function resize() {
+            var size = ($(window).height() - 10) + 'px'
+            $(".size").attr("style","height:"+size+" !important");
+        }
+    </script>
+}

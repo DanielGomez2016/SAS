@@ -15,18 +15,18 @@ namespace Model.Domain
         public int Id { get; set; }
 
         [Display(Name = "Controlador")]
+        [Required]
         public string Controller { get; set; }
 
         [Display(Name = "Accion")]
-        public string Action { get; set; }
+        [Required]
+        public string ActionController { get; set; }
 
         [Display(Name = "Descripcion")]
-        public string Description { get; set; }
+        public string DescriptionAccess { get; set; }
 
         [Display(Name = "Estatus")]
         public Enums.StatusAccess Status { get; set; }
-
-        public List<SystemAccessRoles> Roles { get; set; }
 
         public bool Deleted { get; set; }
 

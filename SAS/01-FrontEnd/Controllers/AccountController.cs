@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.Linq;
-using System.Security.Claims;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -11,25 +8,32 @@ using Microsoft.Owin.Security;
 using FrontEnd.ViewModels;
 using Model.Auth;
 using Auth.Service;
-using Newtonsoft.Json;
 using Common;
+using Service;
+using FrontEnd.App_Start;
+using Model.Domain;
+using Persistence.DatabaseContext;
 
 namespace FrontEnd.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        private readonly IUserService _userService = DependecyFactory.GetInstance<IUserService>();
+
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private IMemberService _memberService = DependecyFactory.GetInstance<IMemberService>();
 
         public AccountController()
         {
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IMemberService memberService)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            memberService = _memberService;
         }
 
         public ApplicationSignInManager SignInManager
@@ -38,9 +42,9 @@ namespace FrontEnd.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -77,32 +81,62 @@ namespace FrontEnd.Controllers
                 return View(model);
             }
 
-            // This doesn't count login failures towards account lockout
-            // To enable password failures to trigger account lockout, change to shouldLockout: true
-            var result = await SignInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+            var currentUser = UserManager.FindByEmail(model.Email);
+
+            if (currentUser == null)
             {
-                case SignInStatus.Success:
-                    var currentUser = UserManager.FindByEmail(model.Email);
-
-                    var jUser = JsonConvert.SerializeObject(new CurrentUser {
-                        UserId = currentUser.Id,
-                        Name = currentUser.Email,
-                        UserName = currentUser.Email,
-                    });
-
-                    await UserManager.AddClaimAsync(currentUser.Id, new Claim(ClaimTypes.UserData, jUser));
-
-                    return RedirectToLocal(returnUrl);
-                case SignInStatus.LockedOut:
-                    return View("Lockout");
-                case SignInStatus.RequiresVerification:
-                    return RedirectToAction("SendCode", new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                case SignInStatus.Failure:
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return View(model);
             }
+
+            if (!UserManager.CheckPassword(currentUser, model.Password))
+            {
+                ModelState.AddModelError("", "Invalid login attempt.");
+                return View(model);
+            }
+
+            var identity = await UserManager.CreateIdentityAsync(currentUser, DefaultAuthenticationTypes.ApplicationCookie);
+
+            identity = await ApplicationUser.CreateUserClaims(
+                identity,
+                UserManager,
+                currentUser.Id
+            );
+
+            AuthenticationManager.SignIn(new AuthenticationProperties() { IsPersistent = true }, identity);
+
+            return RedirectToLocal(returnUrl);
+        }
+
+        public async Task<ActionResult> Get()
+        {
+            var userId = CurrentUserHelper.Get.UserId;
+            var model = await UserManager.FindByIdAsync(userId);
+
+            return View(new UserBasicInformationViewModel
+            {
+                Id = model.Id,
+            });
+        }
+
+        [HttpPost]
+        public JsonResult Update(UserBasicInformationViewModel model)
+        {
+            var rh = new ResponseHelper();
+
+            if (ModelState.IsValid)
+            {
+                rh = _userService.Update(new ApplicationUser
+                {
+                    Id = model.Id,
+                });
+            }
+            else
+            {
+                rh.SetValidations(ModelState.GetErrors());
+            }
+
+            return Json(rh);
         }
 
         //
@@ -134,7 +168,7 @@ namespace FrontEnd.Controllers
             // If a user enters incorrect codes for a specified amount of time then the user account 
             // will be locked out for a specified amount of time. 
             // You can configure the account lockout settings in IdentityConfig
-            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent:  model.RememberMe, rememberBrowser: model.RememberBrowser);
+            var result = await SignInManager.TwoFactorSignInAsync(model.Provider, model.Code, isPersistent: model.RememberMe, rememberBrowser: model.RememberBrowser);
             switch (result)
             {
                 case SignInStatus.Success:
@@ -159,36 +193,50 @@ namespace FrontEnd.Controllers
         //
         // POST: /Account/Register
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<JsonResult> Register(RegisterViewModel model)
         {
+            var rh = new ResponseHelper();
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser {
+                var userId = "";
+                var user = new ApplicationUser
+                {
                     UserName = model.Email,
                     Email = model.Email,
-                    Name = model.Name,
-                    LastName = model.LastName
                 };
-                var result = await UserManager.CreateAsync(user, model.Password);
+
+                var result = await UserManager.CreateWithDefaultRole(user, model.Password);
+
+                using (var ctx = new ApplicationDbContext())
+                {
+                    userId = ctx.ApplicationUser.Single(x => x.Email == model.Email).Id;
+                }
+ 
                 if (result.Succeeded)
                 {
-                    //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
-                    // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
-                    // Send an email with this link
-                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
-                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                    var member = new Member
+                    {
+                        MemberId = 0,
+                        Name = model.Name,
+                        LastName = model.LastName,
+                        UserId = userId
+                    };
 
-                    return RedirectToAction("Login");
+                    rh = _memberService.InsertOrUpdate(member);
+                    if (rh.Response)
+                    {
+                        rh.Href = "self";
+                    }
                 }
-                AddErrors(result);
+            }
+            else
+            {
+                var validations = ModelState.GetErrors();
+                rh.SetValidations(validations);
             }
 
             // If we got this far, something failed, redisplay form
-            return View(model);
+            return Json(rh);
         }
 
         //

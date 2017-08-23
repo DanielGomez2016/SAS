@@ -11,9 +11,12 @@ namespace FrontEnd.ViewModels
         public string Id { get; set; }
 
         [Required]
-        public string Nombre { get; set; }
+        public string Name { get; set; }
 
         [Required]
-        public string Apellidos { get; set; }
+        public string Lastname { get; set; }
+
+        [Required]
+        public string Email { get; set; }
     }
 }

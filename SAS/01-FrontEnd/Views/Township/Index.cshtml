@@ -1,0 +1,116 @@
+﻿
+
+<div class="size" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Municipios y sus Localidades</h2>
+                        @*Crear nuevo acceso*@
+                        <button id="township-i" type="button" class="btn btn-default pull-right btn-sm">
+                            <i data-toggle="tooltip" data-placement="top" title="Importar Municipios" class="fa fa-file-archive-o"></i>
+                        </button>
+                        <div class="clearfix"></div>
+                        <ul class="nav navbar-right panel_toolbox"></ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div id="listTownship"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal import-->
+<div class="modal fade" id="township-import" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @using (Html.BeginForm("TownshipSaveFile", "Township", FormMethod.Post))
+            {
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Importar Municipios y sus localidades</h4>
+                </div>
+                <div class="modal-body">
+                    <label>Archivo <span class="required">*</span></label>
+                    <input type="file" name="file" class="form-control" />
+                    <span class="help-block">Solo se aceptan archivos válidos en formato xls o xlsx y que no exceda de los 3Mb</span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit"
+                            data-reset="true"
+                            data-ajax="true"
+                            class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+
+            let options = [];
+
+            for (var k in Enums.StatusCollege) {
+                options.push({
+                    value: Enums.StatusCollege[k].value,
+                    description: Enums.StatusCollege[k].description
+                });
+            }
+
+            let config = {
+                class: 'table-striped table-bordered',
+                columnas: [
+                    { leyenda: 'Nombre Municipio', columna: 'Name', ordenable: true, filtro: true, class: 'text-center col-md-3 ' },
+                    { leyenda: 'Localidades', columna: 'Localities', class: 'text-center col-md-9'  },
+                ],
+                modelo: [
+                    { propiedad: 'Name' },
+                    {
+                        propiedad: 'Localities', formato: function (tr, obj, value) {
+                            return value.join(', ').substr(0, 300) + ' ...';
+                        }
+                    },
+                ],
+                url: '@Url.Action("GetAllTownship", "Township")',
+                limite: [5,10,15],
+                filtrable: true,
+                paginable: true,
+                columna: 'Id',
+                columna_orden: 'ASC'
+            };
+
+            let grid = $("#listTownship").anexGrid(config);
+
+            $("#township-i").click(function () {
+                $("#township-import").modal('show');
+            })
+
+            //al cambiar tamaño de la pagina
+            $(window).on("resize", resize);
+
+            // y al cargar la página
+            resize();
+
+        })
+
+        function resize() {
+            var size = ($(window).height() - 10) + 'px'
+            $(".size").attr("style","height:"+size+" !important");
+        }
+    </script>
+}

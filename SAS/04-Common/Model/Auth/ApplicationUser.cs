@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Common;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using Model.Domain;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -16,15 +18,28 @@ namespace Model.Auth
             return userIdentity;
         }
 
-        public string Name { get; set; }
-        public string LastName { get; set; }
-        public byte[] BigFile { get; set; }
-        public byte[] SmallFile { get; set; }
+        public async static Task<ClaimsIdentity> CreateUserClaims(
+            ClaimsIdentity identity,
+            UserManager<ApplicationUser> manager,
+            string userId
+        )
+        {
+            // Current User
+            var currentUser = await manager.FindByIdAsync(userId);
+            var roles = (List<string>)await manager.GetRolesAsync(userId);
 
-        public Institution Institution { get; set; }
-        public int? InstitutionId { get; set; }
+            // Your User Data
+            var jUser = JsonConvert.SerializeObject(new CurrentUser
+            {
+                UserId = currentUser.Id,
+                UserName = currentUser.Email,
+                Roles = roles ?? new List<string>()
+            });
 
-        public Department Department { get; set; }
-        public int? DepartmentId { get; set; }
+            identity.AddClaim(new Claim(ClaimTypes.UserData, jUser));
+
+            return await Task.FromResult(identity);
+        }
+
     }
 }

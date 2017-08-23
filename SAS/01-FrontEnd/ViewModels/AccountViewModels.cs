@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Model.Domain;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace FrontEnd.ViewModels
@@ -70,15 +71,6 @@ namespace FrontEnd.ViewModels
         public string Email { get; set; }
 
         [Required]
-        [Display(Name = "Nombre(s)")]
-        public string Name { get; set; }
-
-        [Required]
-        [EmailAddress]
-        [Display(Name = "Apellidos")]
-        public string LastName { get; set; }
-
-        [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} characters long.", MinimumLength = 6)]
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
@@ -88,6 +80,14 @@ namespace FrontEnd.ViewModels
         [Display(Name = "Confirm password")]
         [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
         public string ConfirmPassword { get; set; }
+
+        [Required]
+        [Display(Name = "Nombre")]
+        public string Name { get; set; }
+
+        [Required]
+        [Display(Name = "Apellidos")]
+        public string LastName { get; set; }
     }
 
     public class ResetPasswordViewModel

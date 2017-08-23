@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using Common;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Model.Auth;
+using Model.Domain;
 using NLog;
 using Persistence.DatabaseContext;
+using Persistence.DbContextScope;
+using Persistence.Repository;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -16,7 +20,9 @@ namespace Auth.Service
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
-        private static ILogger logger = LogManager.GetCurrentClassLogger();
+        private readonly ILogger logger = LogManager.GetCurrentClassLogger();
+        private readonly IDbContextScopeFactory _dbContextScopeFactory;
+        private readonly IRepository<Member> _MemberRepository;
 
         public ApplicationUserManager(IUserStore<ApplicationUser> store)
             : base(store)
@@ -71,7 +77,77 @@ namespace Auth.Service
             return manager;
         }
 
-        public override Task<IdentityResult> AddToRoleAsync(string userId, string roleId)
+        public async Task<IdentityResult> CreateWithDefaultRole(ApplicationUser model, string password)
+        {
+            try
+            {
+                await CreateAsync(model, password);
+
+                using (var ctx = new ApplicationDbContext())
+                {
+                    // Obtener el usuario
+                    var userId = ctx.ApplicationUser.Single(x => x.Email == model.Email).Id;
+
+                    // Obtener el Role
+                    var roleId = ctx.ApplicationRole.Single(x => x.Name == RoleNames.Applicant).Id;
+
+                    // Registramos la relación del role con el user
+                    ctx.Entry(new ApplicationUserRole
+                    {
+                        UserId = userId,
+                        RoleId = roleId
+                    }).State = EntityState.Added;
+
+                    ctx.SaveChanges();
+                }
+
+                return await Task.FromResult(IdentityResult.Success);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                return await Task.FromResult(new IdentityResult(ex.Message));
+            }
+        }
+
+        public ResponseHelper CreateUser(ApplicationUser model, string password)
+        {
+            try
+            {
+                var result = new ResponseHelper();
+                CreateAsync(model, password);
+                var userId = "";
+                using (var ctx = new ApplicationDbContext())
+                {
+                    
+                        // Obtener el usuario
+                        userId = ctx.ApplicationUser.Single(x => x.Email == model.Email).Id;
+
+                    // Obtener el Role
+                    var roleId = ctx.ApplicationRole.Single(x => x.Name == RoleNames.Applicant).Id;
+
+                    // Registramos la relación del role con el user
+                    ctx.Entry(new ApplicationUserRole
+                    {
+                        UserId = userId,
+                        RoleId = roleId
+                    }).State = EntityState.Added;
+
+                    ctx.SaveChanges();
+                    result.SetResponse(true,userId);
+                }
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex.Message);
+                return new ResponseHelper().SetResponse(false, ex.Message);
+            }
+        }
+
+
+        public async override Task<IdentityResult> AddToRoleAsync(string userId, string roleId)
         {
             try
             {
@@ -86,16 +162,16 @@ namespace Auth.Service
                     ctx.SaveChanges();
                 }
 
-                return Task.FromResult(IdentityResult.Success);
+                return await Task.FromResult(IdentityResult.Success);
             }
             catch (Exception ex)
             {
                 logger.Error(ex.Message);
-                return Task.FromResult(new IdentityResult(ex.Message));
+                return await Task.FromResult(new IdentityResult(ex.Message));
             }
         }
 
-        public override Task<IdentityResult> AddToRolesAsync(string userId, params string[] roles)
+        public async override Task<IdentityResult> AddToRolesAsync(string userId, params string[] roles)
         {
             try
             {
@@ -113,16 +189,16 @@ namespace Auth.Service
                     ctx.SaveChanges();
                 }
 
-                return Task.FromResult(IdentityResult.Success);
+                return await Task.FromResult(IdentityResult.Success);
             }
             catch (Exception ex)
             {
                 logger.Error(ex.Message);
-                return Task.FromResult(new IdentityResult(ex.Message));
+                return await Task.FromResult(new IdentityResult(ex.Message));
             }
         }
 
-        public new Task<IEnumerable<ApplicationRole>> GetRolesAsync(string userId)
+        public async new Task<IEnumerable<ApplicationRole>> GetRolesAsync(string userId)
         {
             IEnumerable<ApplicationRole> result = new List<ApplicationRole>();
 
@@ -139,10 +215,10 @@ namespace Auth.Service
                 logger.Error(ex.Message);
             }
 
-            return Task.FromResult(result);
+            return await Task.FromResult(result);
         }
 
-        public override Task<bool> IsInRoleAsync(string userId, string roleId)
+        public async override Task<bool> IsInRoleAsync(string userId, string roleId)
         {
             var result = false;
 
@@ -158,10 +234,10 @@ namespace Auth.Service
                 logger.Error(ex.Message);
             }
 
-            return Task.FromResult(result);
+            return await Task.FromResult(result);
         }
 
-        public override Task<IdentityResult> RemoveFromRoleAsync(string userId, string roleId)
+        public async override Task<IdentityResult> RemoveFromRoleAsync(string userId, string roleId)
         {
             try
             {
@@ -173,16 +249,16 @@ namespace Auth.Service
                     ctx.SaveChanges();
                 }
 
-                return Task.FromResult(IdentityResult.Success);
+                return await Task.FromResult(IdentityResult.Success);
             }
             catch (Exception ex)
             {
                 logger.Error(ex.Message);
-                return Task.FromResult(new IdentityResult(ex.Message));
+                return await Task.FromResult(new IdentityResult(ex.Message));
             }
         }
 
-        public override Task<IdentityResult> RemoveFromRolesAsync(string userId, params string[] roles)
+        public async override Task<IdentityResult> RemoveFromRolesAsync(string userId, params string[] roles)
         {
             try
             {
@@ -194,12 +270,12 @@ namespace Auth.Service
                     ctx.SaveChanges();
                 }
 
-                return Task.FromResult(IdentityResult.Success);
+                return await Task.FromResult(IdentityResult.Success);
             }
             catch (Exception ex)
             {
                 logger.Error(ex.Message);
-                return Task.FromResult(new IdentityResult(ex.Message));
+                return await Task.FromResult(new IdentityResult(ex.Message));
             }
         }
     }

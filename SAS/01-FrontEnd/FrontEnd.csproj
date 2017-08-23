@@ -169,7 +169,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\ValidationConfig.cs" />
+    <Compile Include="Controllers\AccessController.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\CollegeController.cs" />
+    <Compile Include="Controllers\InstitutionController.cs" />
+    <Compile Include="Controllers\RolesController.cs" />
     <Compile Include="Controllers\TestController.cs" />
     <Compile Include="Controllers\LearnController.cs" />
     <Compile Include="Controllers\InstructorController.cs" />
@@ -178,6 +182,9 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\StudyingController.cs" />
+    <Compile Include="Controllers\TownshipController.cs" />
+    <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Filters\AccessAttribute.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -185,8 +192,10 @@
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ViewModels\MemberViewModel.cs" />
     <Compile Include="ViewModels\PanelMenuViewModel.cs" />
     <Compile Include="ViewModels\TestViewModel.cs" />
+    <Compile Include="ViewModels\UserViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\bower_components\bootstrap\dist\css\bootstrap-theme.css" />
@@ -217,6 +226,11 @@
     <Content Include="Assets\bower_components\bootstrap\js\tooltip.js" />
     <Content Include="Assets\bower_components\bootstrap\js\transition.js" />
     <Content Include="Assets\bower_components\bootstrap\package.js" />
+    <Content Include="Assets\bower_components\build\css\custom.css" />
+    <Content Include="Assets\bower_components\build\css\custom.min.css" />
+    <Content Include="Assets\bower_components\build\js\custom.js" />
+    <Content Include="Assets\bower_components\build\js\custom.min.js" />
+    <Content Include="Assets\bower_components\build\js\smartresize.js" />
     <Content Include="Assets\bower_components\font-awesome\css\font-awesome.css" />
     <Content Include="Assets\bower_components\font-awesome\css\font-awesome.min.css" />
     <Content Include="Assets\bower_components\font-awesome\fonts\fontawesome-webfont.svg" />
@@ -405,6 +419,7 @@
     <Content Include="Assets\bower_components\trumbowyg\gulpfile.js" />
     <Content Include="Assets\bower_components\trumbowyg\index.html" />
     <Content Include="Assets\css\bootstrap-theme.min.css" />
+    <Content Include="Assets\css\Site.css" />
     <Content Include="Assets\css\style.css" />
     <Content Include="Assets\images\ajax-loader.svg" />
     <Content Include="Assets\images\courses\business-course.jpg" />
@@ -417,7 +432,11 @@
     <Content Include="Assets\js\enums.js" />
     <Content Include="Assets\js\jquery.anexgrid.min.js" />
     <Content Include="Assets\vue_components\bin\app.bundle.js" />
+    <Content Include="Assets\vue_components\dist\access.components.js" />
     <Content Include="Assets\vue_components\dist\global.components.js" />
+    <Content Include="Assets\vue_components\dist\institute.components.js" />
+    <Content Include="Assets\vue_components\dist\usersedit.components.js" />
+    <Content Include="Assets\vue_components\dist\usersnew.components.js" />
     <Content Include="Assets\vue_components\dist\welcome.components.js" />
     <Content Include="Assets\vue_components\index.html" />
     <Content Include="Assets\vue_components\src\example.main.js" />
@@ -461,13 +480,14 @@
     <Content Include="Views\Manage\SetPassword.cshtml" />
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Account\Lockout.cshtml" />
-    <Content Include="Views\Shared\Account\_LoginPartial.cshtml" />
+    <Content Include="Views\Shared\_LoginPartial.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\Logs\" />
     <Folder Include="Assets\dist\" />
     <Folder Include="Media\categories\" />
     <Folder Include="Media\courses\" />
+    <Folder Include="Views\Member\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -668,6 +688,17 @@
     <Content Include="Views\Panel\Categories.cshtml" />
     <Content Include="Views\Test\Index.cshtml" />
     <Content Include="Views\Studying\_Review.cshtml" />
+    <Content Include="Views\Users\Get.cshtml" />
+    <Content Include="Views\Users\Index.cshtml" />
+    <Content Include="Views\Roles\Index.cshtml" />
+    <Content Include="Views\Shared\_LoginPartialSecond.cshtml" />
+    <Content Include="Views\Shared\Lockout.cshtml" />
+    <Content Include="Views\Access\Index.cshtml" />
+    <Content Include="Views\Institution\Index.cshtml" />
+    <Content Include="Views\Access\Roles.cshtml" />
+    <Content Include="Views\Access\Opss.cshtml" />
+    <Content Include="Views\College\Index.cshtml" />
+    <Content Include="Views\Township\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\02-Service\Auth.Service\Auth.Service.csproj">
@@ -677,6 +708,10 @@
     <ProjectReference Include="..\02-Service\Service\Service.csproj">
       <Project>{28c36359-6bb2-4e51-822f-47ed2319ca5d}</Project>
       <Name>Service</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\03-Persistence\Persistence.Repository\Persistence.Repository.csproj">
+      <Project>{5262083D-877D-4258-9CFE-0576F0437072}</Project>
+      <Name>Persistence.Repository</Name>
     </ProjectReference>
     <ProjectReference Include="..\04-Common\Common\Common.csproj">
       <Project>{fc851e96-7275-4d48-a340-9be06137a8ab}</Project>

@@ -1,10 +1,6 @@
-﻿@using Microsoft.AspNet.Identity
-@{
-    HttpCookie cookie = Request.Cookies.Get("Usuario");
-    ViewBag.nombre = cookie == null ? "" : cookie["Nombre"];
-    ViewBag.Tfoto = cookie == null ? "" : cookie["Perfil"];
+﻿@{
+    CurrentUser user = CurrentUserHelper.Get;
 }
-
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
@@ -15,11 +11,12 @@
             <!-- Opciones perfil -->
             <li class="">
                 <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <img src="@(ViewBag.Tfoto == "" ? Url.Action("GetImagen", "Account") : ViewBag.Tfoto)" alt="">@ViewBag.nombre
+                    @user.UserName
+                    @*<img src="@(ViewBag.Tfoto == "" ? Url.Action("GetImagen", "Account") : ViewBag.Tfoto)" alt="">@ViewBag.nombre*@
                     <span class="fa fa-angle-down"></span>
                 </a>
                 <ul class="dropdown-menu dropdown-usermenu pull-right">
-                    <li>@Html.ActionLink(" Perfil", "Index", "Manage")</li>
+                    @*<li>@Html.ActionLink(" Perfil", "Index", "Manage")</li>*@
                     <li>
                         <a href="javascript:;">
                             <span class="badge bg-red pull-right">50%</span>
@@ -74,6 +71,5 @@
             </li>
             <!-- /mensajes -->
         </ul>
-
     }
 }

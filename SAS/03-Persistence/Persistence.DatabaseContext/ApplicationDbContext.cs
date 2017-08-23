@@ -28,6 +28,7 @@ namespace Persistence.DatabaseContext
         public DbSet<EducationLevel> EducationLevel { get; set; }
         public DbSet<Institution> Institution { get; set; }
         public DbSet<Locality> Locality { get; set; }
+        public DbSet<Member> Member { get; set; }
         public DbSet<Provenance> Provenance { get; set; }
         public DbSet<Record> Record { get; set; }
         public DbSet<Requirements> Requirements { get; set; }
@@ -315,18 +316,25 @@ namespace Persistence.DatabaseContext
                         .IsRequired();
 
             modelBuilder.Entity<SystemAccess>()
-                        .Property(x => x.Action)
+                        .Property(x => x.ActionController)
                         .HasMaxLength(75)
                         .IsRequired();
 
             modelBuilder.Entity<SystemAccess>()
-                        .Property(x => x.Description)
+                        .Property(x => x.DescriptionAccess)
                         .HasMaxLength(250)
                         .IsRequired();
 
             modelBuilder.Entity<SystemAccess>()
                         .Property(x => x.Status)
                         .IsRequired();
+
+            modelBuilder.Entity<SystemAccessRoles>()
+                        .HasKey(t => new {
+                            t.InstitutionId,
+                            t.RoleId,
+                            t.Id
+                        });
 
             #endregion
 

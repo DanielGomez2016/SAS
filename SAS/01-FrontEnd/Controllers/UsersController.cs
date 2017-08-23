@@ -5,6 +5,7 @@ using FrontEnd.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Model.Auth;
+using Model.Domain;
 using Service;
 using System;
 using System.Linq;
@@ -14,7 +15,7 @@ using System.Web.Mvc;
 
 namespace FrontEnd.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class UsersController : Controller
     {
         private ApplicationRoleManager _roleManager
@@ -34,13 +35,28 @@ namespace FrontEnd.Controllers
         }
 
         private readonly IUserService _userService = DependecyFactory.GetInstance<IUserService>();
+        private IMemberService _memberService = DependecyFactory.GetInstance<IMemberService>();
 
         // GET: User
         public ActionResult Index()
         {
-            var model = _userService.GetAll();
+            return View();
+        }
 
-            return View(model);
+        [HttpPost]
+        public JsonResult GetAllUsers(AnexGRID grid)
+        {
+            return Json(
+                _userService.GetAll(grid)
+            );
+        }
+
+        [HttpPost]
+        public JsonResult GetUser(string id)
+        {
+            return Json(
+                _userService.Get(id)
+            );
         }
 
         public async Task<ActionResult> Get(string id)
@@ -49,6 +65,54 @@ namespace FrontEnd.Controllers
             ViewBag.Roles = _roleManager.Roles.OrderBy(x => x.Name).ToList();
 
             return View(model);
+        }
+
+        [HttpPost]
+        public JsonResult UserSave(UserBasicInformationViewModel model)
+        {
+            var rh = new ResponseHelper();
+
+            if (!ModelState.IsValid)
+            {
+                var validations = ModelState.GetErrors();
+                rh.SetValidations(validations);
+            }
+            else
+            {
+                var user = new ApplicationUser
+                {
+                    Id = model.Id,
+                    UserName = model.Email,
+                    Email = model.Email,
+                };
+
+                var member = new Member
+                {
+                    Name = model.Name,
+                    LastName = model.Lastname,
+                    UserId = model.Id,
+                };
+
+                rh = _userService.Update(user);
+                if (rh.Response)
+                {
+                    rh = _memberService.InsertOrUpdate(member);
+                    if (rh.Response)
+                    {
+                        rh.Href = "self";
+                    }
+                }
+            }
+
+            return Json(rh);
+        }
+
+        [HttpPost]
+        public JsonResult DeleteUser(string id)
+        {
+            return Json(
+                _memberService.Delete(id)
+            );
         }
 
         public async Task<ActionResult> AddRole(ApplicationUserRole role)
@@ -65,39 +129,5 @@ namespace FrontEnd.Controllers
 
             return RedirectToAction("Index");
         }
-
-        public async Task<ActionResult> GetProfile()
-        {
-            var userId = CurrentUserHelper.Get.UserId;
-            var model = await _userManager.FindByIdAsync(userId);
-
-            return View(new UserBasicInformationViewModel {
-                Id = model.Id,
-                Nombre = model.Nombre,
-                Apellidos = model.Apellidos
-            });
-        }
-
-        public JsonResult Update(UserBasicInformationViewModel model)
-        {
-            var rh = new ResponseHelper();
-
-            if (ModelState.IsValid)
-            {
-                rh = _userService.Update(new ApplicationUser
-                {
-                    Id = model.Id,
-                    Nombre = model.Nombre,
-                    Apellidos = model.Apellidos
-                });
-            }
-            else
-            {
-                rh.SetValidations(ModelState.GetErrors());
-            }
-
-            return Json(rh);
-        }
-
     }
 }

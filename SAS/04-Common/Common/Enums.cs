@@ -39,36 +39,62 @@ namespace Common
 
         public enum Turn
         {
+            [Description("Matutino")]
             Evening,
-            Morning
+            [Description("Vespertino")]
+            Morning,
+            [Description("Matutino - Vespertino")]
+            DoubleTurn,
+            [Description("Discontinuo")]
+            Discontinued
         }
 
 
         public enum Status
         {
+            [Description("Abierta")]
             Open,
+            [Description("Canalizado")]
             Channeled,
+            [Description("Cnacelada")]
             Canceled,
+            [Description("Cerrada")]
             Closed,
+            [Description("Atendida")]
             Attended
         }
 
         public enum StatusCollege
         {
-            Open,
-            Colse,
-            Reopened
+            [Description("Abierta")]
+            Active,
+            [Description("Baja")]
+            Low,
+            [Description("Clausurada")]
+            Closed,
+            [Description("Reapertura")]
+            Reopening,
+            
         }
 
         public enum StatusAccess
         {
+            [Description("Masculino")]
             On,
+            [Description("Masculino")]
             Off
         }
 
         public enum MyFilters
         {
             IsDeleted
+        }
+
+        public enum Institute
+        {
+            ICHIFE,
+            SEyD,
+            SEECH
         }
 
         public static IEnumerable<EnumDescriptionAndValue> GetAllEnumsWithChilds()

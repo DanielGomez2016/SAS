@@ -7,20 +7,15 @@
 
 @if (Request.IsAuthenticated)
 {
-    <div class="jumbotron">
+    <div class="" style="width:100%; min-height: 800px;">
         <h1>@Parameters.ProjectName</h1>
-        <p>Bienvenido <b>@user.Name</b>.<br />Hoy es un excelente día para seguir ¡<b>aprendiendo</b>!</p>
-        <p class="text-right"><i class="fa fa-thumbs-up"></i> Tu puedes ..</p>
+        <p>Bienvenido <b>@user.UserName</b>.</p>
     </div>
 }
-else
-{
-    <welcome project="@Parameters.ProjectName"
-             link="@Url.Action("Register", "Account")"></welcome>
-}
 
-@Html.Partial("Course/_Courses")
+
+@*@Html.Partial("Course/_Courses")*@
 
 @section scripts {
-    <script src="~/Assets/vue_components/dist/welcome.components.js"></script>
+
 }

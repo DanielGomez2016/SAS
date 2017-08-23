@@ -29,13 +29,11 @@ namespace Model.Domain
         public Institution Institution { get; set; }
         public int InstitutionId { get; set; }
 
-        public ICollection<ApplicationUser> Users { get; set; }
-
         public ICollection<DetailRecord> DetailRecords { get; set; }
 
+        public ICollection<Member> Member { get; set; }
+
         public bool Deleted { get; set; }
-
-
 
     }
 }

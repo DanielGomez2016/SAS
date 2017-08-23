@@ -1,24 +1,165 @@
 ﻿@model List<UserForGridView>
-@{
-    ViewBag.Title = "Users";
-}
 
-<h2 class="page-header">@ViewBag.Title</h2>
+<div class="size" role="main">
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel">
+                    <div class="x_title">
+                        <h2>Usuarios</h2>
+                        @*Crear nuevo acceso*@
+                        <button id="user-new" type="button" class="btn btn-default pull-right btn-sm">
+                            <i data-toggle="tooltip" data-placement="top" title="Nuevo Usuario" class="fa fa-plus"></i>
+                        </button>
+                        <div class="clearfix"></div>
+                        <ul class="nav navbar-right panel_toolbox"></ul>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="x_content">
+                        <div id="listUsers"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Roles</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var m in Model)
-        {
-            <tr>
-                <td><a href="~/users/get/@m.Id">@m.Email</a></td>
-                <td>@string.Join(", ", m.Roles)</td>
-            </tr>
+<!-- Modal -->
+<div class="modal fade" id="user-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @using (Html.BeginForm("UserSave", "Users", FormMethod.Post))
+            {
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Usuario</h4>
+                </div>
+                <div class="modal-body">
+                    <usersedit url="@Url.Action("GetUser", "Users")"></usersedit>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit"
+                            data-reset="true"
+                            data-ajax="true"
+                            class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="user-new" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+            {
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Usuario</h4>
+                </div>
+                <div class="modal-body">
+                    <usersnew></usersnew>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="submit"
+                            data-reset="true"
+                            data-ajax="true"
+                            class="btn btn-primary">
+                        Guardar
+                    </button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Assets/vue_components/dist/usersnew.components.js"></script>
+<script src="~/Assets/vue_components/dist/usersedit.components.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            let config = {
+                class: 'table-striped table-bordered',
+                columnas: [
+                    { leyenda: 'Email', columna: 'Email', ordenable: true, filtro: true, class: 'text-center col-md-2' },
+                    { leyenda: 'Nombre', columna: 'Name',class: 'text-center col-md-3'  },
+                    { leyenda: 'Roles', columna: 'Roles', class: 'text-center col-md-5'  },
+                    { leyenda: 'Acciones', class: 'text-center col-md-2'  },
+                ],
+                modelo: [
+                    { propiedad: 'Email' },
+                    { propiedad: 'Name' },
+                    { propiedad: 'Roles' },
+                    {
+                        propiedad: 'Id', formato: function (tr, obj, value) {
+                            let element = '';
+
+                            element += '<button value="' + value + '" type="button" class=" btn btn-danger user-delete"><i class="fa fa-trash"></i></button>' +
+                                        '<button value="' + value + '" type="button" class="btn btn-primary user-edit"><i class="fa fa-edit"></i></button>';
+
+                            return element;
+                        }
+                    },
+                ],
+                url: '@Url.Action("GetAllUsers", "Users")',
+                limite: [10, 20, 30],
+                filtrable: true,
+                paginable: true,
+                columna: 'Email',
+                columna_orden: 'ASC'
+            };
+
+            let grid = $("#listUsers").anexGrid(config);
+
+            grid.tabla().on('click', '.user-edit', function () {
+                let value = String($(this).val());
+                $("#user-edit").modal('show');
+                $Vm.$emit('userSelectedId', value);
+            })
+
+            grid.tabla().on('click', '.user-delete', function () {
+                let value = $(this).val();
+
+                if (!confirm('Esta seguro de eliminar este registro?')) return;
+
+                $.post('@Url.Action("DeleteUser", "Users")', {
+                    id: value
+                }, function (r) {
+                    if (!r.Response) {
+                        alert(r.Message)
+                    } else {
+                        grid.refrescar();
+                        }
+                    }, 'json')
+            })
+
+            $("#user-new").click(function () {
+                $("#user-new").modal('show');
+            })
+
+
+            //al cambiar tamaño de la pagina
+            $(window).on("resize", resize);
+
+            // y al cargar la página
+            resize();
+
+        })
+
+        function resize() {
+            var size = ($(window).height() - 10) + 'px'
+            $(".size").attr("style","height:"+size+" !important");
         }
-    </tbody>
-</table>
+    </script>
+}

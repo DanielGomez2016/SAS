@@ -13,6 +13,15 @@
           <welcome :project="'test'" :link="'http://anexsoft.com'"></welcome>
           <ul class="list-group">
             <li class="list-group-item">
+              <usersnew></usersnew>
+            </li>
+            <li class="list-group-item">
+              <institute></institute>
+            </li>
+            <li class="list-group-item">
+              <access></access>
+            </li>
+            <li class="list-group-item">
               <price :value="100.28"></price>,
               <price :value="24"></price>,
               <price :value="4548.2"></price>
@@ -46,6 +55,12 @@
     </div>
     <script src="./dist/global.components.js"></script>
     <script src="./dist/welcome.components.js"></script>
+    <script src="./dist/access.components.js"></script>
+    <script src="./dist/institute.components.js"></script>
+    <script src="./dist/usersnew.components.js"></script>
+    
+    
+    
     <script>
       window.addEventListener('load', function() {
         window.$Vm = new Vue({

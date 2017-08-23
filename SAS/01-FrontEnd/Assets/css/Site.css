@@ -1,26 +1,26 @@
-﻿body {
+﻿/*body {
     padding-top: 50px;
     padding-bottom: 20px;
 }
 
-/* Set padding to keep content from hitting the edges */
+/* Set padding to keep content from hitting the edges 
 .body-content {
     padding-left: 15px;
     padding-right: 15px;
-}
+}*/
 
 /* Set width on the form input elements since they're 100% wide by default */
-input,
+/*input,
 select,
 textarea {
     max-width: 280px;
-}
+}*/
 
-th{
+/*th{
     background:#777;
     color:#fff;
     text-transform:uppercase;
-}
+}*/
 
 textarea{
     min-height:70px;
@@ -166,4 +166,12 @@ div.paginacion input[type="text"]:focus{
 
 .ui-helper-hidden-accessible{
     display:none;
+}
+
+span.form-validation-failed {
+    color: #bf6a6a;
+    font-size: 0.9em;
+    display: block;
+    padding: 4px;
+    font-style: italic;
 }

@@ -56,7 +56,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Anexgrid.cs" />
+    <Compile Include="Grid.cs" />
     <Compile Include="CurrentUserHelper.cs" />
     <Compile Include="CustomFilters\ISoftDeleted.cs" />
     <Compile Include="DependecyFactory.cs" />
@@ -70,6 +70,7 @@
     <Compile Include="ProjectHelpers\Slug.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResponseHelper.cs" />
+    <Compile Include="RoleNames.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
